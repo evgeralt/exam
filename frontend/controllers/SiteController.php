@@ -2,31 +2,43 @@
 
 namespace frontend\controllers;
 
-use common\components\stat\Stat;
-use yii\base\Exception;
-use yii\rest\Controller;
+use frontend\components\stat\RedisRepo;
+use yii\filters\ContentNegotiator;
+use yii\web\Controller;
+use yii\web\Response;
 
 class SiteController extends Controller
 {
+    /** @var RedisRepo */
+    private $repo;
+
+    public function __construct($id, $module, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->repo = new RedisRepo(\Yii::$app->redis);
+    }
+
+    public function behaviors()
+    {
+        return [
+            'contentNegotiator' => [
+                'class' => ContentNegotiator::class,
+                'formats' => [
+                    'application/json' => Response::FORMAT_JSON,
+                ],
+            ],
+        ];
+    }
+
     public function actionIndex()
     {
-        /** @var Stat $stat */
-        $stat = \Yii::$app->stat;
-
-        return $stat->getStat();
+        return $this->repo->getAll();
     }
 
     public function actionVisit(string $id)
     {
-        /** @var Stat $stat */
-        $stat = \Yii::$app->stat;
-        $stat->increment($id);
+        $this->repo->increment($id);
 
         return ['status' => 1];
-    }
-
-    public function actionError()
-    {
-        throw new Exception();
     }
 }
