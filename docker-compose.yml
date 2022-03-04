@@ -1,0 +1,33 @@
+version: '3.2'
+
+services:
+
+  nginx:
+    image: nginx
+    links:
+      - fpm
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/config:/etc/nginx/conf.d
+    ports:
+      - 80:80
+    networks:
+      default:
+        aliases:
+          - partner.lc
+
+  fpm:
+    build: ./docker/php7-fpm
+    volumes:
+      - ./:/var/www
+    expose:
+      - 9000
+    links:
+      - redis
+    environment:
+      COMPOSER_AUTH: "${COMPOSER_AUTH}"
+
+  redis:
+    image: redis:latest
+    ports:
+      - 16379:6379
