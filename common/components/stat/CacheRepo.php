@@ -31,7 +31,7 @@ class CacheRepo extends BaseObject implements RepoInterface
 
     public function getAll(): array
     {
-        // Это можно унести в фоновый воркер, разместил здесь для наглядности
+        // Это можно (и нужно) унести в фоновый воркер, разместил здесь для наглядности
         $this->queue->on(Queue::EVENT_AFTER_ERROR, function (ExecEvent $event) {
             throw new Exception('Statistics collection error');
         });
