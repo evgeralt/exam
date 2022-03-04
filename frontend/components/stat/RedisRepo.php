@@ -4,7 +4,7 @@ namespace frontend\components\stat;
 
 use yii\redis\Connection;
 
-class RedisRepo implements RepoInterface
+class RedisRepo
 {
     public const STAT_COUNTRIES = 'statCountries';
     /** @var Connection */
