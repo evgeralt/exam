@@ -19,5 +19,19 @@ return [
                 'database' => 0,
             ],
         ],
+        'redis' => [
+            'class' => 'yii\redis\Connection',
+            'hostname' => '127.0.0.1',
+            'port' => 6379,
+            'database' => 0,
+        ],
+        'queue' => [
+            'class' => '\yii\queue\redis\Queue',
+            'redis' => 'redis',
+            'channel' => 'queue',
+        ],
+        'stat' => [
+            'class' => \common\components\stat\Stat::class,
+        ],
     ],
 ];
