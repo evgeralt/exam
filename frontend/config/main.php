@@ -4,12 +4,6 @@ return [
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
-        'redis' => [
-            'class' => \yii\redis\Connection::class,
-            'hostname' => 'redis',
-            'port' => 6379,
-            'database' => 0,
-        ],
         'urlManager' => [
             'class' => \yii\web\UrlManager::class,
             'showScriptName' => false,
@@ -18,6 +12,19 @@ return [
                 '<controller:\w+>/<action:\w+>/<id:\w+>' => '<controller>/<action>',
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
             ],
+        ],
+    ],
+    'container' => [
+        'singletons' => [
+            \yii\redis\Connection::class => [
+                'class' => \yii\redis\Connection::class,
+                'hostname' => 'redis',
+                'port' => 6379,
+                'database' => 0,
+            ],
+        ],
+        'definitions' => [
+            \frontend\components\stat\StatRepoInterface::class => \frontend\components\stat\StatRepoRedis::class,
         ],
     ],
 ];
