@@ -2,20 +2,24 @@
 
 namespace frontend\controllers;
 
-use frontend\components\stat\RedisRepo;
+use frontend\components\stat\StatReader;
+use frontend\components\stat\VisitHandler;
 use yii\filters\ContentNegotiator;
 use yii\web\Controller;
 use yii\web\Response;
 
 class SiteController extends Controller
 {
-    /** @var RedisRepo */
-    private $repo;
+    /** @var StatReader */
+    private $reader;
+    /** @var VisitHandler */
+    private $visitHandler;
 
-    public function __construct($id, $module, $config = [])
+    public function __construct($id, $module, StatReader $reader, VisitHandler $visitHandler, $config = [])
     {
         parent::__construct($id, $module, $config);
-        $this->repo = new RedisRepo(\Yii::$app->redis);
+        $this->reader = $reader;
+        $this->visitHandler = $visitHandler;
     }
 
     public function behaviors()
@@ -32,12 +36,16 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        return $this->repo->getAll();
+        return $this->reader->getAll();
     }
 
     public function actionVisit(string $id)
     {
-        $this->repo->increment($id);
+        try {
+            $this->visitHandler->increment($id);
+        } catch (\Throwable $exception) {
+            return ['status' => 0];
+        }
 
         return ['status' => 1];
     }
