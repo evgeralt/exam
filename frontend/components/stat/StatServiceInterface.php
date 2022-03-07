@@ -2,7 +2,7 @@
 
 namespace frontend\components\stat;
 
-interface StatRepoInterface
+interface StatServiceInterface
 {
     public function getAll(): array;
 

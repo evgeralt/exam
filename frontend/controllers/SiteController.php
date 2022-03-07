@@ -2,20 +2,24 @@
 
 namespace frontend\controllers;
 
-use frontend\components\stat\StatRepoInterface;
+use frontend\components\stat\StatReader;
+use frontend\components\stat\VisitHandler;
 use yii\filters\ContentNegotiator;
 use yii\web\Controller;
 use yii\web\Response;
 
 class SiteController extends Controller
 {
-    /** @var StatRepoInterface */
-    private $repo;
+    /** @var StatReader */
+    private $reader;
+    /** @var VisitHandler */
+    private $visitHandler;
 
-    public function __construct($id, $module, StatRepoInterface $repo, $config = [])
+    public function __construct($id, $module, StatReader $reader, VisitHandler $visitHandler, $config = [])
     {
         parent::__construct($id, $module, $config);
-        $this->repo = $repo;
+        $this->reader = $reader;
+        $this->visitHandler = $visitHandler;
     }
 
     public function behaviors()
@@ -32,13 +36,13 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        return $this->repo->getAll();
+        return $this->reader->getAll();
     }
 
     public function actionVisit(string $id)
     {
         try {
-            $this->repo->increment($id);
+            $this->visitHandler->increment($id);
         } catch (\Throwable $exception) {
             return ['status' => 0];
         }

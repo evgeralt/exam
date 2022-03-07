@@ -1,4 +1,6 @@
 <?php
+Yii::setAlias('@frontend', dirname(__DIR__));
+
 return [
     'id' => 'exam',
     'basePath' => dirname(__DIR__),
@@ -24,7 +26,9 @@ return [
             ],
         ],
         'definitions' => [
-            \frontend\components\stat\StatRepoInterface::class => \frontend\components\stat\StatRepoRedis::class,
+            \frontend\components\stat\StatServiceInterface::class => \frontend\components\stat\StatServiceRedis::class,
+            \frontend\components\stat\StatReader::class => \frontend\components\stat\StatReader::class,
+            \frontend\components\stat\VisitHandler::class => \frontend\components\stat\VisitHandler::class,
         ],
     ],
 ];

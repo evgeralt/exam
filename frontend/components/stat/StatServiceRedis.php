@@ -2,27 +2,33 @@
 
 namespace frontend\components\stat;
 
-use yii\base\BaseObject;
 use yii\redis\Connection;
 
-class StatRepoRedis extends BaseObject implements StatRepoInterface
+class StatServiceRedis implements StatServiceInterface
 {
     private const STAT_COUNTRIES = 'statCountries';
     /** @var Connection */
     private $connection;
 
-    public function __construct(Connection $connection, $config = [])
+    public function __construct(Connection $connection)
     {
-        parent::__construct($config);
         $this->connection = $connection;
     }
 
     public function getAll(): array
     {
-        return array_combine(
-            $this->connection->hkeys(self::STAT_COUNTRIES),
-            $this->connection->hvals(self::STAT_COUNTRIES)
-        );
+        $stat = [];
+        $key = null;
+        foreach ($this->connection->hgetall(self::STAT_COUNTRIES) as $item) {
+            if ($key) {
+                $stat[$key] = $item;
+                $key = null;
+            } else {
+                $key = $item;
+            }
+        }
+
+        return $stat;
     }
 
     public function increment(string $countryCode): void
